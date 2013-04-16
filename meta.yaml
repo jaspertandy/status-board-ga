@@ -1,0 +1,12 @@
+daily:
+    title:
+    file:
+    dir:
+    chart: line
+    profile:
+hourly:
+    title:
+    file:
+    dir:
+    chart: line
+    profile:

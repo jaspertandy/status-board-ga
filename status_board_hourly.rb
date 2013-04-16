@@ -18,50 +18,55 @@ require 'rubygems'
 require 'gattica'
 require 'date'
 require 'json'
+require 'yaml'
+require 'awesome_print'
 
-# Your Settings
-google_email   = 'hiltmon@gmail.com'  # Your google login
-google_pwd     = 'i_aint_sayin'   # Must be a single use password if 2 factor is set up
-the_title      = "Hiltmon.Com Hourly" # The title of the Graph
-file_name      = "hiltmonhourly"      # The file name to use (.CSV and .JSON)
-dropbox_folder = "/Users/Hiltmon/Dropbox/Data" # The path to a folder on your local DropBox
+auth = YAML.load_file 'config.yaml'
+meta = YAML.load_file 'meta.yaml'
+meta = meta['hourly']
 
 # Configuration 
-metrics = ['pageviews', 'visitors', 'newVisits']
+metrics = {
+    pageviews: 'Page Views',
+    visitors: 'Visitors',
+    newVisits: 'New Visits'
+}
 colors = ['red', 'green', 'blue']
 days_to_get = 7
 
 # Login
 ga = Gattica.new({ 
-    :email => google_email, 
-    :password => google_pwd
+    :email => auth['email'], 
+    :password => auth['password']
 })
 
 # Get a list of accounts
 accounts = ga.accounts
 
-# Choose the first account
-ga.profile_id = accounts.first.profile_id
-# ga.profile_id = accounts[1].profile_id # OR second account
+if meta['profile'] == nil
+    ga.profile_id = accounts.first.profile_id
+else
+    ga.profile_id = meta['profile']
+end
 
 # Get the data
 data = ga.get({ 
     :start_date   => (Date.today - 1).to_s.split('T')[0],
     :end_date     => Date.today.to_s.split('T')[0],
     :dimensions   => ['date', 'hour'],
-    :metrics      => metrics,
+    :metrics      => metrics.keys,
 })
 
 # Make the JSON file
 graph = Hash.new
-graph[:title] = the_title
+graph[:title] = meta['title']
 graph[:type] = 'line'
 index = 0
 graph[:datasequences] = Array.new
 
-metrics.each do |element|
+metrics.each do |element,label|
   sequence = Hash.new
-  sequence[:title] = element
+  sequence[:title] = label
   sequence_data = Array.new
   data.to_h['points'].each do |point|
     the_date = Date.parse(point.to_h["dimensions"].first[:date]).to_s.split('T')[0]
@@ -79,7 +84,7 @@ metrics.each do |element|
   graph[:datasequences] << sequence
 end
 
-File.open("#{dropbox_folder}/#{file_name}.json", "w") do |f|
+File.open("#{meta['dir']}/#{meta['file']}.json", "w") do |f|
   wrapper = Hash.new
   wrapper[:graph] = graph
   f.write wrapper.to_json

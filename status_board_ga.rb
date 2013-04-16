@@ -21,7 +21,8 @@ require 'yaml'
 require 'awesome_print'
 
 auth = YAML.load_file 'config.yaml'
-meta = YAML.load_file 'visits.yaml'
+meta = YAML.load_file 'meta.yaml'
+meta = meta['daily']
 
 # Configuration 
 metrics = {
@@ -43,8 +44,6 @@ accounts = ga.accounts
 
 # Choose the first account
 
-ga.profile_id = accounts.first.profile_id
-# ga.profile_id = accounts[1].profile_id # OR second account
 if meta['profile'] == nil
     ga.profile_id = accounts.first.profile_id
 else
