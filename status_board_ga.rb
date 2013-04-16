@@ -20,9 +20,11 @@ require 'json'
 require 'yaml'
 require 'awesome_print'
 
-auth = YAML.load_file 'config.yaml'
-meta = YAML.load_file 'meta.yaml'
-meta = meta['daily']
+DIR = File.expand_path File.dirname __FILE__
+
+config = YAML.load_file "#{DIR}/config.yaml"
+auth = config['auth']
+meta = config['daily']
 
 # Configuration 
 metrics = {

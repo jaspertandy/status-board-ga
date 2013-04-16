@@ -21,9 +21,11 @@ require 'json'
 require 'yaml'
 require 'awesome_print'
 
-auth = YAML.load_file 'config.yaml'
-meta = YAML.load_file 'meta.yaml'
-meta = meta['hourly']
+DIR = File.expand_path File.dirname __FILE__
+
+config = YAML.load_file "#{DIR}/config.yaml"
+auth = config['auth']
+meta = config['hourly']
 
 # Configuration 
 metrics = {
@@ -32,7 +34,6 @@ metrics = {
     newVisits: 'New Visits'
 }
 colors = ['red', 'green', 'blue']
-days_to_get = 7
 
 # Login
 ga = Gattica.new({ 
@@ -60,7 +61,7 @@ data = ga.get({
 # Make the JSON file
 graph = Hash.new
 graph[:title] = meta['title']
-graph[:type] = 'line'
+graph[:type] = meta['chart']
 index = 0
 graph[:datasequences] = Array.new
 
@@ -74,7 +75,7 @@ metrics.each do |element,label|
     the_window = DateTime.parse("#{the_date} #{the_hour}:00 #{DateTime.now.strftime("%z")}") 
     next if the_window < (DateTime.now - 1)
     next if the_window > DateTime.now
-    the_title = the_window.hour.to_s
+    the_title = "#{the_window.hour.to_s}:00"
     the_value = point.to_h["metrics"][index][element.to_sym]
     sequence_data << { :title => the_title, :value => the_value }
   end

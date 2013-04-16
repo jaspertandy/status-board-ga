@@ -1,2 +1,19 @@
-email:
-password:
+auth:
+    email:
+    password:
+daily:
+    title:
+    file:
+    dir:
+    chart:
+    profile:
+hourly:
+    title:
+    file:
+    dir:
+    chart:
+    profile:
+pages:
+    file:
+    dir:
+    profile:

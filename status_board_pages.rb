@@ -18,12 +18,11 @@ require 'gattica'
 require 'date'
 require 'json'
 
-# Your Settings
-google_email   = 'hiltmon@gmail.com'  # Your google login
-google_pwd     = 'i_aint_sayin'   # Must be a single use password if 2 factor is set up
-the_title      = "Hiltmon.Com Top Pages Today"
-file_name      = "hiltmonpages"       # The file name to use (Assumes .CSV)
-dropbox_folder = "/Users/Hiltmon/Dropbox/Data" # The path to a folder on your local DropBox
+DIR = File.expand_path File.dirname __FILE__
+
+config = YAML.load_file "#{DIR}/config.yaml"
+auth = config['auth']
+meta = config['pages']
 
 # Configuration
 metrics = ['pageviews'] #, 'uniquePageviews', 'newVisits']
@@ -31,17 +30,18 @@ colors = ['red', 'green', 'blue']
 
 # Login
 ga = Gattica.new({ 
-    :email => google_email, 
-    :password => google_pwd
+    :email => auth['email'], 
+    :password => auth['password']
 })
-
 
 # Get a list of accounts
 accounts = ga.accounts
 
-# Choose the first account
-ga.profile_id = accounts.first.profile_id
-# ga.profile_id = accounts[1].profile_id # OR second account
+if meta['profile'] == nil
+    ga.profile_id = accounts.first.profile_id
+else
+    ga.profile_id = meta['profile']
+end
 
 # Get the data
 data = ga.get({ 
@@ -53,7 +53,7 @@ data = ga.get({
 })
 
 # # Make the CSV file
-File.open("#{dropbox_folder}/#{file_name}.csv", "w") do |f|
+File.open("#{meta['dir']}/#{meta['file']}.csv", "w") do |f|
   f.write "20%, 80%\n"
   count = 0
   data.to_h['points'].each do |point|
