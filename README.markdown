@@ -41,6 +41,10 @@ Add the linked files as graphs or tables in [Status Board](http://click.linksyne
 
 Source can be viewed or forked via GitHub: [http://github.com/hiltmon/status-board-ga.git](http://github.com/hiltmon/status-board-ga.git).
 
+## Config
+
+Everything is configured by `config.yaml`. Add in your GMail username and password. Each type of report is also configure here. The `file` variable should be used without extension, as the appropriate one is added automatically. `dir` should be full and absolute when running by a cron. If you only have one profile in your analytics account, you can remove `profile` entirely. Leaving any trace of the variable will probably cause this to fail, currently.
+
 # License
 (The MIT License)
 
