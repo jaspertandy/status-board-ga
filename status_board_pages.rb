@@ -17,6 +17,7 @@ require 'rubygems'
 require 'gattica'
 require 'date'
 require 'json'
+require 'yaml'
 
 DIR = File.expand_path File.dirname __FILE__
 

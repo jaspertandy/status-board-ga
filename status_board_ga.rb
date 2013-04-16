@@ -18,7 +18,6 @@ require 'gattica'
 require 'date'
 require 'json'
 require 'yaml'
-require 'awesome_print'
 
 DIR = File.expand_path File.dirname __FILE__
 
